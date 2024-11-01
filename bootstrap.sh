@@ -32,4 +32,4 @@ echo $LLM_PROXY_PROD >> /root/.env
 
 cd instruqt-scripts
 chmod +x setup-elastic-in-instruqt.sh
-./setup-elastic-in-instruqt.sh
+source ./setup-elastic-in-instruqt.sh
