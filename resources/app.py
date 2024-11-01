@@ -29,7 +29,7 @@ def init():
     print("Running download-full-logs.sh...")
     subprocess.run(['sudo', full_logs_script, 'full', '--no-timestamp-processing'], check=True)
 
-    #integrations.load() #nginx, mysql
+    integrations.load() #nginx, mysql
     ingest_pipelines.load()
     enroll_elastic_agent.install_elastic_agent()
     slo.load() 
