@@ -32,8 +32,8 @@ def init():
     integrations.load() #nginx, mysql
     ingest_pipelines.load()
     enroll_elastic_agent.install_elastic_agent()
-    slo.load() 
     time.sleep(600)
+    slo.load()
     ml.load_integration_jobs()
     kibana.load() #dashboards
     
