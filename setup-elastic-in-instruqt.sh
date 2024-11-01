@@ -1,20 +1,4 @@
-i#!/bin/bash 
-
-# Wait for the Instruqt host bootstrap to finish
-until [ -f /opt/instruqt/bootstrap/host-bootstrap-completed ]
-do
-    sleep 1
-done
-
-# Wait for the Kubernetes API server to become available
-while ! curl --silent --fail --output /dev/null http://localhost:8001/api 
-do
-    sleep 1 
-done
-
-# Enable bash completion for kubectl
-echo "source /usr/share/bash-completion/bash_completion" >> /root/.bashrc
-echo "complete -F __start_kubectl k" >> /root/.bashrc
+#!/bin/bash 
 
 { apt-get update; apt-get install nginx -y; } &
 
@@ -687,3 +671,6 @@ sed -i '/OPENAI_API_KEY/d' /root/.env
 curl -s -X POST --header "Authorization: Basic $BASE64"  -H "kbn-xsrf: true" \
 "http://localhost:30002/api/saved_objects/_import?overwrite=true" --form file=@settings.ndjson
 
+cd resources
+pip3 install -r requirements.txt
+python app.py

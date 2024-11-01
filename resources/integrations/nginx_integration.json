@@ -1,0 +1,66 @@
+{
+  "agent_policy_name": "Agent policy 1",
+  "package_policy": {
+    "package": {
+      "name": "nginx",
+      "version": "1.23.0"
+    },
+    "name": "nginx-1",
+    "description": "",
+    "namespace": "default",
+    "inputs": {
+      "nginx-logfile": {
+        "enabled": true,
+        "streams": {
+          "nginx.access": {
+            "enabled": true,
+            "vars": {
+              "paths": [
+                "/var/log/nginx*/access.log*"
+              ],
+              "tags": [
+                "nginx-access"
+              ],
+              "preserve_original_event": false,
+              "ignore_older": "26280h"
+            }
+          },
+          "nginx.error": {
+            "enabled": true,
+            "vars": {
+              "paths": [
+                "/var/log/nginx*/error.log*"
+              ],
+              "tags": [
+                "nginx-error"
+              ],
+              "preserve_original_event": false,
+              "ignore_older": "26280h"
+            }
+          }
+        }
+      },
+      "nginx-nginx/metrics": {
+        "enabled": false,
+        "vars": {
+          "hosts": [
+            "http://127.0.0.1:8080",
+            "http://127.0.0.1:8081"
+          ]
+        },
+        "streams": {
+          "nginx.stubstatus": {
+            "enabled": false,
+            "vars": {
+              "period": "10s",
+              "server_status_path": "/nginx_status",
+              "tags": [
+                "nginx-stubstatus"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
