@@ -391,3 +391,7 @@ export BASE64=$(echo -n "elastic:${PASSWORD}" | base64)
 
 curl -s -X POST --header "Authorization: Basic $BASE64" "$ELASTICSEARCH_URL/_license/start_trial?acknowledge=true"
 {"acknowledged":true,"trial_was_started":true,"type":"trial"}
+
+cd resources
+pip3 install -r requirements.txt
+python3 app.py

@@ -495,8 +495,7 @@ server {
 
 echo "Starting trial license"
 echo ""
-curl -s -X POST --header "Authorization: Basic $BASE64" \
-"$ELASTICSEARCH_URL/_license/start_trial?acknowledge=true"
+curl -s -X POST --header "Authorization: Basic $BASE64" "$ELASTICSEARCH_URL/_license/start_trial?acknowledge=true"
 
 echo '127.0.0.1 fleet-server-agent-http.default.svc' >> /etc/hosts
 echo '127.0.0.1 elasticsearch-es-http.default.svc' >> /etc/hosts
@@ -675,6 +674,16 @@ curl -s -X POST --header "Authorization: Basic $BASE64"  -H "kbn-xsrf: true" \
 "http://localhost:30002/api/saved_objects/_import?overwrite=true" --form file=@settings.ndjson
 
 export ELASTICSEARCH_USER=elastic
+
+echo $KIBANA_URL
+echo $PASSWORD
+echo $ELASTICSEARCH_USER
+echo $ELASTICSEARCH_PASSWORD
+echo $FLEET_URL
+echo $ELASTICSEARCH_URL
+echo $BASE64
+
+curl -s -X POST --header "Authorization: Basic $BASE64" "$ELASTICSEARCH_URL/_license/start_trial?acknowledge=true"
 
 cd resources
 pip3 install -r requirements.txt
