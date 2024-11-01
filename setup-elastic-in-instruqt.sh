@@ -674,6 +674,10 @@ curl -s -X POST --header "Authorization: Basic $BASE64"  -H "kbn-xsrf: true" \
 "http://localhost:30002/api/saved_objects/_import?overwrite=true" --form file=@settings.ndjson
 
 export ELASTICSEARCH_USER=elastic
+export KIBANA_URL=http://localhost:30002
+export FLEET_URL=https://localhost:30822
+export PASSWORD=$(kubectl get secret elasticsearch-es-elastic-user -n default -o go-template='{{.data.elastic | base64decode}}')
+
 
 echo $KIBANA_URL
 echo $PASSWORD
