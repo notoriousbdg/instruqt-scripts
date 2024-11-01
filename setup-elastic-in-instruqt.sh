@@ -674,6 +674,8 @@ sed -i '/OPENAI_API_KEY/d' /root/.env
 curl -s -X POST --header "Authorization: Basic $BASE64"  -H "kbn-xsrf: true" \
 "http://localhost:30002/api/saved_objects/_import?overwrite=true" --form file=@settings.ndjson
 
+export ELASTICSEARCH_USER=elastic
+
 cd resources
 pip3 install -r requirements.txt
 python3 app.py
