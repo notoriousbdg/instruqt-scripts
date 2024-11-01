@@ -1,5 +1,7 @@
 #!/bin/bash 
 
+source /root/.env
+
 { apt-get update; apt-get install nginx -y; } &
 
 kubectl create -f https://download.elastic.co/downloads/eck/2.13.0/crds.yaml
