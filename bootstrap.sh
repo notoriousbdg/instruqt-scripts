@@ -26,12 +26,10 @@ pip3 --version
 
 git clone https://github.com/davidgeorgehope/instruqt-scripts
 
-# More structured approach
-cat << EOF >> /root/.env
-GCSKEY_EDEN_WORKSHOP=$GCSKEY_EDEN_WORKSHOP
-LLM_PROXY_STAGING=$LLM_PROXY_STAGING
-LLM_PROXY_PROD=$LLM_PROXY_PROD
-EOF
+# Add the variables with proper escaping
+echo "LLM_PROXY_STAGING='$LLM_PROXY_STAGING'" >> /root/.env
+echo "LLM_PROXY_PROD='$LLM_PROXY_PROD'" >> /root/.env
+echo $GCSKEY_EDEN_WORKSHOP >> /tmp/gcs.client.eden-workshop.credentials_file
 
 cd instruqt-scripts
 chmod +x setup-elastic-in-instruqt.sh

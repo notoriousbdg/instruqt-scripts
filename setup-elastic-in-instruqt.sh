@@ -6,7 +6,8 @@ kubectl create -f https://download.elastic.co/downloads/eck/2.13.0/crds.yaml
 kubectl apply -f https://download.elastic.co/downloads/eck/2.13.0/operator.yaml
 
 
-echo $GCSKEY_EDEN_WORKSHOP >> /tmp/gcs.client.eden-workshop.credentials_file
+#echo $GCSKEY_EDEN_WORKSHOP >> /tmp/gcs.client.eden-workshop.credentials_file
+
 kubectl create secret generic gcs-credentials-eden-workshop --from-file=/tmp/gcs.client.eden-workshop.credentials_file
 rm /tmp/gcs.client.eden-workshop.credentials_file
 
