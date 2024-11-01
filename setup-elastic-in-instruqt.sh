@@ -673,4 +673,4 @@ curl -s -X POST --header "Authorization: Basic $BASE64"  -H "kbn-xsrf: true" \
 
 cd resources
 pip3 install -r requirements.txt
-python app.py
+source python app.py

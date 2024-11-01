@@ -26,6 +26,10 @@ pip3 --version
 
 git clone https://github.com/davidgeorgehope/instruqt-scripts
 
+echo $GCSKEY_EDEN_WORKSHOP >> /root/.env
+echo $LLM_PROXY_STAGING >> /root/.env
+echo $LLM_PROXY_PROD >> /root/.env
+
 cd instruqt-scripts
 chmod +x setup-elastic-in-instruqt.sh
 ./setup-elastic-in-instruqt.sh
