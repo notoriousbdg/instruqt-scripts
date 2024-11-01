@@ -1,4 +1,8 @@
 #!/bin/bash
+# Create all required directories
+mkdir -p /var/log/nginx_backend
+mkdir -p /var/log/nginx_frontend  
+mkdir -p /var/log/mysql
 
 # Check if log type argument is provided
 if [ "$#" -lt 1 ] || [[ ! "$1" =~ ^(full|truncated)$ ]]; then
