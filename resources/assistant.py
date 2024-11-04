@@ -56,4 +56,6 @@ def load():
             headers={'kbn-xsrf': 'true', 'X-Elastic-Internal-Origin': 'Kibana', 'Content-Type': 'application/json'}
         )
         print(kb_resp.json())
-load()
+
+if __name__ == "__main__":
+    load()
