@@ -36,6 +36,7 @@ def init():
     slo.load()
     ml.load_integration_jobs()
     kibana.load() #dashboards
+    assistant.load()
     
 
 init()
