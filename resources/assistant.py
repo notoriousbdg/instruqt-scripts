@@ -6,6 +6,8 @@ TIMEOUT = 10
 ASSISTANT_RESOURCES_PATH  = 'assistant'
 
 def load():
+    print(os.environ["LLM_PROXY_PROD"])
+
     if 'LLM_PROXY_PROD' in os.environ:
         # Get API key from LLM proxy
         headers = {
@@ -54,3 +56,4 @@ def load():
             headers={'kbn-xsrf': 'true', 'X-Elastic-Internal-Origin': 'Kibana', 'Content-Type': 'application/json'}
         )
         print(kb_resp.json())
+load()
