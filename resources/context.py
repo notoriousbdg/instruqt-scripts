@@ -83,8 +83,5 @@ def load_knowledge():
                 print(f"loading knowledge {filename}: {resp.json()}")  
 
 def load():
-    load_elser()
     load_knowledge()
-    load_indices()
 
-#load_knowledge()

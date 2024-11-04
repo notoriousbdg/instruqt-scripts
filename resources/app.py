@@ -37,6 +37,6 @@ def init():
     ml.load_integration_jobs()
     kibana.load() #dashboards
     assistant.load()
+    context.load()
     
-
 init()
