@@ -1,7 +1,7 @@
 import requests
 import os
 
-TIMEOUT = 10
+TIMEOUT = 180
 
 ASSISTANT_RESOURCES_PATH  = 'assistant'
 
