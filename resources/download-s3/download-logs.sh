@@ -95,9 +95,15 @@ if [ "$PROCESS_TIMESTAMPS" = true ]; then
         elif [[ $file == *"mysql-slow.log" ]]; then
             sed_script=""
             for date in "${LOG_DATES[@]}"; do
-                log_date_formatted=$(date -d "$date" "+Time: %Y-%m-%d")
-                target_date=$(date -d "$date + $OFFSET_DAYS days" "+Time: %Y-%m-%d")
-                sed_script+="s|$log_date_formatted|$target_date|g;"
+                # Adjust 'Time: ' lines
+                log_time_formatted=$(date -d "$date" "+Time: %Y-%m-%d")
+                target_time=$(date -d "$date + $OFFSET_DAYS days" "+Time: %Y-%m-%d")
+                sed_script+="s|$log_time_formatted|$target_time|g;"
+
+                # Adjust 'SET timestamp=' lines
+                original_unix_ts=$(date -d "$date" "+%s")
+                new_unix_ts=$(( original_unix_ts + OFFSET_DAYS*86400 ))
+                sed_script+="s|SET timestamp=${original_unix_ts};|SET timestamp=${new_unix_ts};|g;"
             done
             sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
         elif [[ $file == *"error.log" ]]; then
