@@ -50,66 +50,73 @@ tar xzf "$FILENAME" -C "$TEMP_DIR/process"
 
 if [ "$PROCESS_TIMESTAMPS" = true ]; then
     echo "Adjusting dates in log files..."
+
     # Dates in the logs (source dates)
-    LOG_DAY1=28  # Latest date in logs
-    LOG_DAY2=27
-    LOG_DAY3=26
-    LOG_DAY4=25  # Earliest date in logs
-    LOG_MONTH=Oct
-    LOG_MONTH_NUM=10
+    LOG_DATES=("2024-10-28" "2024-10-27" "2024-10-26" "2024-10-25")
     LOG_YEAR=2024
     LOG_YEAR_SHORT=24
 
-    # Target dates (dates you want to replace with)
-    DAY1=$(date -d "1 day ago" +%d)     # 1 day ago
-    DAY2=$(date -d "2 day ago" +%d)     # 2 day ago
-    DAY3=$(date -d "3 days ago" +%d)    # 2 days ago
-    DAY4=$(date -d "4 days ago" +%d)    # 3 days ago
-    MONTH=$(date -d "4 day ago" +%b)        # Current month abbreviation
-    MONTH_NUM=$(date -d "4 day ago" +%m)    # Current month number
-    YEAR=$(date -d "4 day ago" +%Y)         # Current year
-    YEAR_SHORT=$(date -d "4 day ago" +%y)   # Current year in two digits
+    # Calculate the offset days between the latest log date and today
+    LATEST_LOG_DATE="${LOG_DATES[0]}"
+    CURRENT_DATE=$(date +%Y-%m-%d)
+    OFFSET_DAYS=$(( ($(date -d "$CURRENT_DATE" +%s) - $(date -d "$LATEST_LOG_DATE" +%s)) / 86400 ))
+
+    # Ensure the offset is non-negative to avoid future dates
+    if [ "$OFFSET_DAYS" -lt 0 ]; then
+        echo "Log dates are in the future relative to today. Adjusting OFFSET_DAYS to 0."
+        OFFSET_DAYS=0
+    fi
 
     # Function to adjust dates in files
     adjust_dates() {
-        local file=$1
+        local file="$1"
         echo "Processing $file"
-        
+
         # Create a temporary file in a controlled location
         local temp_file="${file}.tmp"
-        
+
         if [[ $file == *"access.log" ]]; then
             echo "Found access log, updating dates..."
-            sed -e "s|\[${LOG_DAY1}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY1}/${MONTH}/${YEAR}:|g" \
-                -e "s|\[${LOG_DAY2}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY2}/${MONTH}/${YEAR}:|g" \
-                -e "s|\[${LOG_DAY3}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY3}/${MONTH}/${YEAR}:|g" \
-                -e "s|\[${LOG_DAY4}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY4}/${MONTH}/${YEAR}:|g" \
-                "$file" > "$temp_file" && mv "$temp_file" "$file"
+            sed_script=""
+            for date in "${LOG_DATES[@]}"; do
+                log_date_formatted=$(date -d "$date" "+\[%d/%b/%Y:")
+                target_date=$(date -d "$date + $OFFSET_DAYS days" "+\[%d/%b/%Y:")
+                sed_script+="s|$log_date_formatted|$target_date|g;"
+            done
+            sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
         elif [[ $file == *"mysql.log" ]]; then
-            sed -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY1}|${YEAR}-${MONTH_NUM}-${DAY1}|g" \
-                -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY2}|${YEAR}-${MONTH_NUM}-${DAY2}|g" \
-                -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY3}|${YEAR}-${MONTH_NUM}-${DAY3}|g" \
-                -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY4}|${YEAR}-${MONTH_NUM}-${DAY4}|g" \
-                "$file" > "$temp_file" && mv "$temp_file" "$file"
+            sed_script=""
+            for date in "${LOG_DATES[@]}"; do
+                log_date_formatted=$(date -d "$date" "+%Y-%m-%d")
+                target_date=$(date -d "$date + $OFFSET_DAYS days" "+%Y-%m-%d")
+                sed_script+="s|$log_date_formatted|$target_date|g;"
+            done
+            sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
         elif [[ $file == *"mysql-slow.log" ]]; then
-            sed -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY1}|Time: ${YEAR}-${MONTH_NUM}-${DAY1}|g" \
-                -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY2}|Time: ${YEAR}-${MONTH_NUM}-${DAY2}|g" \
-                -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY3}|Time: ${YEAR}-${MONTH_NUM}-${DAY3}|g" \
-                -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY4}|Time: ${YEAR}-${MONTH_NUM}-${DAY4}|g" \
-                "$file" > "$temp_file" && mv "$temp_file" "$file"
+            sed_script=""
+            for date in "${LOG_DATES[@]}"; do
+                log_date_formatted=$(date -d "$date" "+Time: %Y-%m-%d")
+                target_date=$(date -d "$date + $OFFSET_DAYS days" "+Time: %Y-%m-%d")
+                sed_script+="s|$log_date_formatted|$target_date|g;"
+            done
+            sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
         elif [[ $file == *"error.log" ]]; then
             if [[ $file == *"mysql"* ]]; then
-                sed -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY1}|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" \
-                    -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY2}|${YEAR_SHORT}${MONTH_NUM}${DAY2}|g" \
-                    -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY3}|${YEAR_SHORT}${MONTH_NUM}${DAY3}|g" \
-                    -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY4}|${YEAR_SHORT}${MONTH_NUM}${DAY4}|g" \
-                    "$file" > "$temp_file" && mv "$temp_file" "$file"
+                sed_script=""
+                for date in "${LOG_DATES[@]}"; do
+                    log_date_formatted=$(date -d "$date" "+%y%m%d")
+                    target_date=$(date -d "$date + $OFFSET_DAYS days" "+%y%m%d")
+                    sed_script+="s|$log_date_formatted|$target_date|g;"
+                done
+                sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
             else
-                sed -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY1}|${YEAR}/${MONTH_NUM}/${DAY1}|g" \
-                    -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY2}|${YEAR}/${MONTH_NUM}/${DAY2}|g" \
-                    -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY3}|${YEAR}/${MONTH_NUM}/${DAY3}|g" \
-                    -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY4}|${YEAR}/${MONTH_NUM}/${DAY4}|g" \
-                    "$file" > "$temp_file" && mv "$temp_file" "$file"
+                sed_script=""
+                for date in "${LOG_DATES[@]}"; do
+                    log_date_formatted=$(date -d "$date" "+%Y/%m/%d")
+                    target_date=$(date -d "$date + $OFFSET_DAYS days" "+%Y/%m/%d")
+                    sed_script+="s|$log_date_formatted|$target_date|g;"
+                done
+                sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
             fi
         fi
 

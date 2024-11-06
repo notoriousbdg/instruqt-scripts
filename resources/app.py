@@ -27,7 +27,8 @@ def init():
     subprocess.run(['chmod', '+x', full_logs_script], check=True)
 
     print("Running download-full-logs.sh...")
-    subprocess.run(['sudo', full_logs_script, 'full', '--no-timestamp-processing'], check=True)
+    #subprocess.run(['sudo', full_logs_script, 'full', '--no-timestamp-processing'], check=True)
+    subprocess.run(['sudo', full_logs_script, 'full'], check=True)
 
     integrations.load() #nginx, mysql
     ingest_pipelines.load()
