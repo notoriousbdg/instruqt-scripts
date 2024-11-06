@@ -38,5 +38,8 @@ def init():
     kibana.load() #dashboards
     assistant.load()
     context.load()
+    #TODO: Alerts
+    #TODO: SLO Tweak
+    #TODO: Time ranges
     
 init()

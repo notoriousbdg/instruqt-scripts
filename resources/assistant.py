@@ -19,12 +19,13 @@ def load():
             headers=headers,
             json={
                 'models': ['gpt-4'],
-                'duration': '7d',
+                'duration': '180d',
                 'metadata': {'user': f'instruqt-observe-ml-{os.environ.get("_SANDBOX_ID", "")}'}
             },
             timeout=TIMEOUT
         )
         api_key = proxy_response.json()['key']
+        print('response', api_key) 
 
         # Create connector
         connector_data = {

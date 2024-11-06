@@ -14,9 +14,9 @@
     },
     "budgetingMethod": "occurrences",
     "timeWindow": {
-        "duration": "30d",
-        "type": "rolling"
-    },
+        "duration": "1w",
+        "type": "calendarAligned"
+      },
     "objective": {
         "target": 0.98
     },
