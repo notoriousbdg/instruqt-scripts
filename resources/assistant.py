@@ -6,7 +6,6 @@ TIMEOUT = 180
 ASSISTANT_RESOURCES_PATH  = 'assistant'
 
 def load():
-    print(os.environ["LLM_PROXY_PROD"])
 
     if 'LLM_PROXY_PROD' in os.environ:
         # Get API key from LLM proxy
@@ -25,7 +24,6 @@ def load():
             timeout=TIMEOUT
         )
         api_key = proxy_response.json()['key']
-        print('response', api_key) 
 
         # Create connector
         connector_data = {
@@ -47,7 +45,6 @@ def load():
             auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']),
             headers={'kbn-xsrf': 'true', 'Content-Type': 'application/json'}
         )
-        print(resp.json())
 
         # Setup KB for O11y Assistant
         kb_resp = requests.post(
@@ -56,7 +53,6 @@ def load():
             auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']),
             headers={'kbn-xsrf': 'true', 'X-Elastic-Internal-Origin': 'Kibana', 'Content-Type': 'application/json'}
         )
-        print(kb_resp.json())
 
 if __name__ == "__main__":
     load()
