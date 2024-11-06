@@ -12,17 +12,21 @@
           "dataViewId": "logs-*"
       }
   },
-  "budgetingMethod": "occurrences",
+  "budgetingMethod": "timeslices",
   "timeWindow": {
-    "duration": "1w",
+    "duration": "1M",
     "type": "calendarAligned"
   },
   "objective": {
-      "target": 0.98
+    "target": 0.98,
+    "timesliceTarget": 0.95,
+    "timesliceWindow": "1m"
   },
   "tags": [],
-  "groupBy": ["*"],
+  "groupBy": [
+    "*"
+  ],
   "settings": {
-      "preventInitialBackfill": false
+    "preventInitialBackfill": false
   }
 }
