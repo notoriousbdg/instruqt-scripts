@@ -93,23 +93,59 @@ if [ "$PROCESS_TIMESTAMPS" = true ]; then
             done
             sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
         elif [[ $file == *"mysql-slow.log" ]]; then
-            OFFSET_SECONDS=$(( OFFSET_DAYS * 86400 ))
-            echo "Offset in seconds: $OFFSET_SECONDS"
+            echo "Processing mysql-slow.log"
+            echo "Adjusting dates in $file..."
 
-            awk -v offset="$OFFSET_SECONDS" '
+            # Create a temporary file in a controlled location
+            local temp_file="${file}.tmp"
+
+            # Read the entire file into memory (assuming the file isn't too large)
+            # Alternatively, you can process line by line if the file is large
+            awk -v log_dates="${LOG_DATES[*]}" '
+            BEGIN {
+                split(log_dates, dates, " ")
+                for (i in dates) {
+                    log_date = dates[i]
+                    # Convert log_date to UNIX timestamp at midnight
+                    log_date_ts = mktime(gensub(/-/, " ", "g", log_date) " 00 00 00")
+                    # Calculate the target date timestamp at midnight
+                    target_date_ts = systime() - (systime() % 86400)
+                    date_offset_seconds = target_date_ts - log_date_ts
+                    date_offsets[log_date] = date_offset_seconds
+                }
+            }
             {
                 if ($0 ~ /^# Time: /) {
-                    # Extract the timestamp from the "Time: " line
-                    match($0, /^# Time: ([0-9]{4})-([0-9]{2})-([0-9]{2})\s+([0-9:]+)/, arr)
+                    # Extract the date and time
+                    match($0, /^# Time: ([0-9]{4}-[0-9]{2}-[0-9]{2})\s+([0-9:]+)/, arr)
                     if (arr[0] != "") {
-                        orig_time = arr[1] "-" arr[2] "-" arr[3] " " arr[4]
-                        new_time = strftime("%Y-%m-%d %H:%M:%S", mktime(orig_time) + offset)
-                        sub(/^# Time: .*/, "# Time: " new_time)
+                        orig_date = arr[1]
+                        orig_time = arr[2]
+                        orig_datetime = orig_date " " orig_time
+                        # Convert original datetime to timestamp
+                        orig_ts = mktime(gensub(/-/, " ", "g", orig_datetime))
+                        # Get the offset for this date
+                        offset = date_offsets[orig_date]
+                        if (offset == "") {
+                            # If date not in LOG_DATES, no offset
+                            offset = 0
+                        }
+                        new_ts = orig_ts + offset
+                        new_datetime = strftime("%Y-%m-%d %H:%M:%S", new_ts)
+                        sub(/^# Time: .*/, "# Time: " new_datetime)
                     }
                 } else if ($0 ~ /^SET timestamp=/) {
+                    # Extract the timestamp
                     match($0, /SET timestamp=([0-9]+);/, arr)
                     if (arr[1] != "") {
-                        new_timestamp = arr[1] + offset
+                        orig_timestamp = arr[1]
+                        # Determine which date this timestamp corresponds to
+                        orig_date = strftime("%Y-%m-%d", orig_timestamp)
+                        offset = date_offsets[orig_date]
+                        if (offset == "") {
+                            offset = 0
+                        }
+                        new_timestamp = orig_timestamp + offset
                         sub(/SET timestamp=[0-9]+;/, "SET timestamp=" new_timestamp ";")
                     }
                 }
