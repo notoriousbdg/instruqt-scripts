@@ -93,19 +93,28 @@ if [ "$PROCESS_TIMESTAMPS" = true ]; then
             done
             sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
         elif [[ $file == *"mysql-slow.log" ]]; then
-            sed_script=""
-            for date in "${LOG_DATES[@]}"; do
-                # Adjust 'Time: ' lines
-                log_time_formatted=$(date -d "$date" "+Time: %Y-%m-%d")
-                target_time=$(date -d "$date + $OFFSET_DAYS days" "+Time: %Y-%m-%d")
-                sed_script+="s|$log_time_formatted|$target_time|g;"
+            OFFSET_SECONDS=$(( OFFSET_DAYS * 86400 ))
+            echo "Offset in seconds: $OFFSET_SECONDS"
 
-                # Adjust 'SET timestamp=' lines
-                original_unix_ts=$(date -d "$date" "+%s")
-                new_unix_ts=$(( original_unix_ts + OFFSET_DAYS*86400 ))
-                sed_script+="s|SET timestamp=${original_unix_ts};|SET timestamp=${new_unix_ts};|g;"
-            done
-            sed -e "$sed_script" "$file" > "$temp_file" && mv "$temp_file" "$file"
+            awk -v offset="$OFFSET_SECONDS" '
+            {
+                if ($0 ~ /^# Time: /) {
+                    # Extract the timestamp from the "Time: " line
+                    match($0, /^# Time: ([0-9]{4})-([0-9]{2})-([0-9]{2})\s+([0-9:]+)/, arr)
+                    if (arr[0] != "") {
+                        orig_time = arr[1] "-" arr[2] "-" arr[3] " " arr[4]
+                        new_time = strftime("%Y-%m-%d %H:%M:%S", mktime(orig_time) + offset)
+                        sub(/^# Time: .*/, "# Time: " new_time)
+                    }
+                } else if ($0 ~ /^SET timestamp=/) {
+                    match($0, /SET timestamp=([0-9]+);/, arr)
+                    if (arr[1] != "") {
+                        new_timestamp = arr[1] + offset
+                        sub(/SET timestamp=[0-9]+;/, "SET timestamp=" new_timestamp ";")
+                    }
+                }
+                print
+            }' "$file" > "$temp_file" && mv "$temp_file" "$file"
         elif [[ $file == *"error.log" ]]; then
             if [[ $file == *"mysql"* ]]; then
                 sed_script=""
