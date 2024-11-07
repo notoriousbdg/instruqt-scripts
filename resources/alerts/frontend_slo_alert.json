@@ -66,7 +66,7 @@
     "interval": "1m"
   },
   "tags": [],
-  "name": "test burn rate",
+  "name": "SLO Burn Rate Alert",
   "rule_type_id": "slo.rules.burnRate",
   "actions": []
 }
