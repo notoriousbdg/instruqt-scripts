@@ -12,9 +12,9 @@
     },
     "criteria": [
       {
-        "field": "log.level",
+        "field": "log.file.path",
         "comparator": "equals",
-        "value": "ERROR"
+        "value": "/var/log/mysql/error.log"
       }
     ]
   },
