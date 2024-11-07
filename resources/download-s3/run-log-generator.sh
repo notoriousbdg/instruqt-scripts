@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# Function to install Java 19
+# Function to install Java 19 silently
 install_java_19() {
-    echo "Java not found or not version 19. Installing OpenJDK 19..."
+    echo "Java not found or not version 19. Installing OpenJDK 19 silently..."
 
-    # Install necessary utilities
-    sudo apt install openjdk-19-jre-headless 
+    # Update package lists silently
+    sudo apt-get update -qq
+
+    # Install OpenJDK 19 silently
+    sudo apt-get install -y -qq openjdk-19-jre-headless
 }
 
 # Check if Java is installed and if it's version 19
