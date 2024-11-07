@@ -679,14 +679,6 @@ export FLEET_URL=https://localhost:30822
 export PASSWORD=$(kubectl get secret elasticsearch-es-elastic-user -n default -o go-template='{{.data.elastic | base64decode}}')
 
 
-echo $KIBANA_URL
-echo $PASSWORD
-echo $ELASTICSEARCH_USER
-echo $ELASTICSEARCH_PASSWORD
-echo $FLEET_URL
-echo $ELASTICSEARCH_URL
-echo $BASE64
-
 curl -s -X POST --header "Authorization: Basic $BASE64" "$ELASTICSEARCH_URL/_license/start_trial?acknowledge=true"
 
 cd resources

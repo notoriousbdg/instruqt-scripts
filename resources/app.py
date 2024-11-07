@@ -20,8 +20,10 @@ app = Flask(__name__)
 def init():
     #assistant.load()
     #context.load()
-    full_logs_script = 'download-s3/download-logs.sh'
+    #full_logs_script = 'download-s3/download-logs.sh'
 
+    full_logs_script = 'download-s3/run-log-generator.sh'
+    
     # Set execute permissions on the shell scripts
     print("Setting execute permissions on shell scripts...")
     subprocess.run(['chmod', '+x', full_logs_script], check=True)
