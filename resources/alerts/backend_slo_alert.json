@@ -1,4 +1,3 @@
-POST kbn:/api/alerting/rule
 {
   "params": {
     "sloId": "a5317f09-b8ec-4302-a269-0e512922ca2f",
