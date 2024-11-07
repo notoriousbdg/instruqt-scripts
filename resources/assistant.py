@@ -17,8 +17,8 @@ def load():
             'https://llm-proxy.prod-3.eden.elastic.dev/key/generate',
             headers=headers,
             json={
-                'models': ['gpt-4'],
-                'duration': '180d',
+                'models': ['gpt-4o'],
+                'duration': '7d',
                 'metadata': {'user': f'instruqt-observe-ml-{os.environ.get("_SANDBOX_ID", "")}'}
             },
             timeout=TIMEOUT
