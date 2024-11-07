@@ -39,6 +39,7 @@ def init():
     slo.load()
     ml.load_integration_jobs()
     kibana.load() #dashboards
+    kibana.create_alerts()
     assistant.load()
     context.load()
     #TODO: Alerts
