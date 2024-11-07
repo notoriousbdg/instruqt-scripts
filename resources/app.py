@@ -42,7 +42,5 @@ def init():
     kibana.create_alerts()
     assistant.load()
     context.load()
-    #TODO: Alerts
-    #TODO: Time ranges
     
 init()
