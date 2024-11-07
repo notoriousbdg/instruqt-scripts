@@ -5,31 +5,7 @@ install_java_19() {
     echo "Java not found or not version 19. Installing OpenJDK 19..."
 
     # Install necessary utilities
-    sudo apt update
-    sudo apt install -y wget tar
-
-    # Download OpenJDK 19
-    wget https://download.oracle.com/java/19/archive/jdk-19.0.2_linux-x64_bin.tar.gz -O jdk-19_linux-x64_bin.tar.gz
-
-    # Create directory for Java installations
-    sudo mkdir -p /usr/lib/jvm
-
-    # Extract the downloaded archive
-    sudo tar -xzf jdk-19_linux-x64_bin.tar.gz -C /usr/lib/jvm
-
-    # Remove the downloaded archive
-    rm jdk-19_linux-x64_bin.tar.gz
-
-    # Set up alternatives to manage multiple Java versions
-    sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-19/bin/java 1919
-    sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk-19/bin/javac 1919
-
-    # Set Java 19 as the default
-    sudo update-alternatives --set java /usr/lib/jvm/jdk-19/bin/java
-    sudo update-alternatives --set javac /usr/lib/jvm/jdk-19/bin/javac
-
-    # Verify installation
-    java -version
+    sudo apt install openjdk-19-jre-headless 
 }
 
 # Check if Java is installed and if it's version 19
