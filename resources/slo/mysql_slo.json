@@ -18,7 +18,7 @@
     "type": "calendarAligned"
   },
   "objective": {
-    "target": 0.98,
+    "target": 0.999,
     "timesliceTarget": 0.95,
     "timesliceWindow": "1m"
   },
