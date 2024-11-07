@@ -1,7 +1,7 @@
 {
   "params": {
     "timeSize": 5,
-    "timeUnit": "m",
+    "timeUnit": "d",
     "logView": {
       "type": "log-view-reference",
       "logViewId": "default"
@@ -11,11 +11,11 @@
       "comparator": "more than"
     },
     "criteria": [
-      {
-        "field": "log.file.path",
-        "comparator": "equals",
-        "value": "/var/log/mysql/error.log"
-      }
+        {
+            "field": "log.level",
+            "comparator": "equals",
+            "value": "ERROR"
+          }
     ]
   },
   "consumer": "alerts",
