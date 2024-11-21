@@ -8,7 +8,6 @@ app = Flask(__name__)
 
 def init():
     assistant.load()
-    context.load()
 
 def deploy_java_favorite():
     """
