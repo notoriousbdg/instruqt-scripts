@@ -1,5 +1,5 @@
 {
-    "text": "remember for ES|QL, you need to use '*' for wildcards, not '%'",
+    "text": "The database is experiencing downtime due to tablespace issues. The SRE team is working on implementing a fix, refer to the ticket in GitHub https://github.com/davidgeorgehope/runbooks/issues/1 for more details.",
     "is_correction": false,
     "public": true,
     "confidence": "high",
