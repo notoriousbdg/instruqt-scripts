@@ -2,7 +2,7 @@
 
 source /root/.env
 
-DEMO_TYPE=${1:-nginx-demo}  # Default to nginx if no argument provided
+DEMO_TYPE=${1:-nginx_demo}  # Default to nginx if no argument provided
 echo "Setting up demo type: $DEMO_TYPE" >> log.txt
 
 { apt-get update; apt-get install nginx -y; } &
