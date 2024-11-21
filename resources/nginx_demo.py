@@ -34,6 +34,7 @@ def init():
     kibana.load() #dashboards
     kibana.create_alerts()
     assistant.load()
+    time.sleep(10)
     context.load()
     
 init() 
