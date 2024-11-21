@@ -2,6 +2,9 @@
 
 source /root/.env
 
+DEMO_TYPE=${1:-nginx-demo}  # Default to nginx if no argument provided
+echo "Setting up demo type: $DEMO_TYPE"
+
 { apt-get update; apt-get install nginx -y; } &
 
 kubectl create -f https://download.elastic.co/downloads/eck/2.13.0/crds.yaml
@@ -20,7 +23,7 @@ metadata:
   name: kibana
   namespace: default
 spec:
-  version: 8.15.2
+  version: 8.16.1
   count: 1
   elasticsearchRef:
     name: elasticsearch
@@ -94,7 +97,7 @@ metadata:
   name: elasticsearch
   namespace: default
 spec:
-  version: 8.15.2
+  version: 8.16.1
   secureSettings:
   - secretName: gcs-credentials-eden-workshop
   http:
@@ -124,7 +127,7 @@ metadata:
   name: fleet-server
   namespace: default
 spec:
-  version: 8.15.2
+  version: 8.16.1
   kibanaRef:
     name: kibana
   elasticsearchRefs:
@@ -156,7 +159,7 @@ metadata:
   name: elastic-agent
   namespace: default
 spec:
-  version: 8.15.2
+  version: 8.16.1
   kibanaRef:
     name: kibana
   fleetServerRef: 
@@ -683,4 +686,4 @@ curl -s -X POST --header "Authorization: Basic $BASE64" "$ELASTICSEARCH_URL/_lic
 
 cd resources
 pip3 install -r requirements.txt
-python3 app.py
+python3 ${DEMO_TYPE}.py

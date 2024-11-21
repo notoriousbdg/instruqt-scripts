@@ -1,7 +1,6 @@
 from flask import Flask
 import time
 import threading
-
 import ml
 import alias
 import kibana
@@ -13,15 +12,9 @@ import enroll_elastic_agent
 import subprocess
 import ingest_pipelines
 
-
 app = Flask(__name__)
 
-
 def init():
-    #assistant.load()
-    #context.load()
-    #full_logs_script = 'download-s3/download-logs.sh'
-
     full_logs_script = 'download-s3/run-log-generator.sh'
     
     # Set execute permissions on the shell scripts
@@ -29,9 +22,9 @@ def init():
     subprocess.run(['chmod', '+x', full_logs_script], check=True)
 
     print("Running download-full-logs.sh...")
-    #subprocess.run(['sudo', full_logs_script, 'full', '--no-timestamp-processing'], check=True)
     subprocess.run(['sudo', full_logs_script, 'full'], check=True)
 
+    # Initialize nginx-specific components
     integrations.load() #nginx, mysql
     ingest_pipelines.load()
     enroll_elastic_agent.install_elastic_agent()
@@ -43,4 +36,4 @@ def init():
     assistant.load()
     context.load()
     
-init()
+init() 
