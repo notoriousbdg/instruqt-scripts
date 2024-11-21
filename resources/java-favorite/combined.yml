@@ -3,22 +3,15 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: favorite-config
-  namespace: java
 data:
   TOGGLE_SERVICE_DELAY: "0"
   TOGGLE_CANARY_DELAY: "0"
   TOGGLE_CANARY_FAILURE: "0"
 ---
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: java
----
-apiVersion: v1
 kind: Service
 metadata:
   name: favorite-java
-  namespace: java
 spec:
   selector:
     app: favorite-java
@@ -32,7 +25,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: favorite-java
-  namespace: java
 spec:
   replicas: 1
   selector:
@@ -81,7 +73,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: poller-config
-  namespace: java
 data:
   script.sh: |
     #!/bin/sh
@@ -94,7 +85,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: endpoint-poller
-  namespace: java
 spec:
   replicas: 1
   selector:
