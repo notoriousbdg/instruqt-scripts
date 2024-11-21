@@ -15,7 +15,7 @@ def deploy_java_favorite():
     Deploys the Java favorite application using kubectl.
     """
     import os
-    yaml_file = os.path.join('resources', 'java-favorite', 'combined.yml')
+    yaml_file = os.path.join('java-favorite', 'combined.yml')
     try:
         # Apply the Kubernetes configuration using kubectl
         subprocess.run(['kubectl', 'apply', '-f', yaml_file], check=True)
