@@ -1,0 +1,127 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: favorite-config
+  namespace: java
+data:
+  TOGGLE_SERVICE_DELAY: "0"
+  TOGGLE_CANARY_DELAY: "0"
+  TOGGLE_CANARY_FAILURE: "0"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: java
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: favorite-java
+  namespace: java
+spec:
+  selector:
+    app: favorite-java
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: favorite-java
+  namespace: java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: favorite-java
+  template:
+    metadata:
+      labels:
+        app: favorite-java
+    spec:
+      containers:
+      - name: favorite-java
+        image: docker.elastic.co/demos/workshop/observability/elastiflix-java-favorite:8.9.0-10
+        ports:
+        - containerPort: 5000
+        env:
+        - name: REDIS_HOST
+          value: "redis"
+        - name: TOGGLE_SERVICE_DELAY
+          valueFrom:
+            configMapKeyRef:
+              name: favorite-config
+              key: TOGGLE_SERVICE_DELAY
+              optional: true
+        - name: TOGGLE_CANARY_DELAY
+          valueFrom:
+            configMapKeyRef:
+              name: favorite-config
+              key: TOGGLE_CANARY_DELAY
+              optional: true
+        - name: TOGGLE_CANARY_FAILURE
+          valueFrom:
+            configMapKeyRef:
+              name: favorite-config
+              key: TOGGLE_CANARY_FAILURE
+              optional: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: poller-config
+  namespace: java
+data:
+  script.sh: |
+    #!/bin/sh
+    while true; do
+      curl -s "http://${TARGET_ENDPOINT}:${TARGET_PORT}/favorites"
+      sleep ${POLL_INTERVAL}
+    done
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: endpoint-poller
+  namespace: java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: endpoint-poller
+  template:
+    metadata:
+      labels:
+        app: endpoint-poller
+    spec:
+      containers:
+      - name: poller
+        image: curlimages/curl:latest
+        command: ["/bin/sh"]
+        args: ["/scripts/script.sh"]
+        env:
+        - name: TARGET_ENDPOINT
+          value: "favorite-java"
+        - name: TARGET_PORT
+          value: "5002"
+        - name: POLL_INTERVAL
+          value: "1"
+        volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+      volumes:
+      - name: scripts
+        configMap:
+          name: poller-config
+          defaultMode: 0755 
