@@ -9,6 +9,27 @@ def log_message(message):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with open('log.txt', 'a') as f:
         f.write(f"[{timestamp}] {message}\n")
+        
+def load_kb():
+
+            kb_resp = requests.post(
+                f"{os.environ['KIBANA_URL']}/internal/observability_ai_assistant/kb/setup",
+                timeout=TIMEOUT,
+                auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']),
+                headers={'kbn-xsrf': 'true', 'X-Elastic-Internal-Origin': 'Kibana', 'Content-Type': 'application/json'}
+            )
+            log_message(f"KB setup response status: {kb_resp.status_code}")
+
+            sync_resp = requests.get(
+                f"{os.environ['KIBANA_URL']}/api/ml/saved_objects/sync",
+                timeout=TIMEOUT,
+                auth=(
+                    os.environ['ELASTICSEARCH_USER'],
+                    os.environ['ELASTICSEARCH_PASSWORD']
+                ),
+                headers={"kbn-xsrf": "reporting"}
+            )
+            print(sync_resp.json())      
 
 def load():
     log_message("Starting assistant load process")
@@ -57,46 +78,15 @@ def load():
                 headers={'kbn-xsrf': 'true', 'Content-Type': 'application/json'}
             )
             log_message(f"Connector creation response status: {resp.status_code}")
-
-            kb_resp = requests.post(
-                f"{os.environ['KIBANA_URL']}/internal/observability_ai_assistant/kb/setup",
-                timeout=TIMEOUT,
-                auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']),
-                headers={'kbn-xsrf': 'true', 'X-Elastic-Internal-Origin': 'Kibana', 'Content-Type': 'application/json'}
-            )
-            log_message(f"KB setup response status: {kb_resp.status_code}")
-
+      
+            load_kb()
+            load_kb() 
+            
         except Exception as e:
             log_message(f"Error occurred: {str(e)}")
             raise
     else:
         log_message("LLM_PROXY_PROD not found in environment variables")
-
-def load_elser():
-    body = {
-        "service": "elser",
-        "service_settings": {
-            "num_allocations": 1,
-            "num_threads": 1
-        }
-    }
-    resp = requests.put(f"{os.environ['ELASTICSEARCH_URL']}/_inference/sparse_embedding/elser_model_2",
-                            json=body, timeout=TIMEOUT,
-                            auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']), 
-                            headers={"kbn-xsrf": "reporting", "Content-Type": "application/json"})
-    print(resp.json())  
-
-
-    sync_resp = requests.get(
-        f"{os.environ['KIBANA_URL']}/api/ml/saved_objects/sync",
-        timeout=TIMEOUT,
-        auth=(
-            os.environ['ELASTICSEARCH_USER'],
-            os.environ['ELASTICSEARCH_PASSWORD']
-        ),
-        headers={"kbn-xsrf": "reporting"}
-    )
-    print(sync_resp.json())
 
 if __name__ == "__main__":
     load()
