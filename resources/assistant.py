@@ -80,11 +80,23 @@ def load_elser():
             "num_threads": 1
         }
     }
-    resp = requests.put(f"{os.environ['ELASTICSEARCH_URL']}/_inference/sparse_embedding/elser_model_2_linux-x86_64",
+    resp = requests.put(f"{os.environ['ELASTICSEARCH_URL']}/_inference/sparse_embedding/elser_model_2",
                             json=body, timeout=TIMEOUT,
                             auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']), 
                             headers={"kbn-xsrf": "reporting", "Content-Type": "application/json"})
     print(resp.json())  
+
+
+    sync_resp = requests.get(
+        f"{os.environ['KIBANA_URL']}/api/ml/saved_objects/sync",
+        timeout=TIMEOUT,
+        auth=(
+            os.environ['ELASTICSEARCH_USER'],
+            os.environ['ELASTICSEARCH_PASSWORD']
+        ),
+        headers={"kbn-xsrf": "reporting"}
+    )
+    print(sync_resp.json())
 
 if __name__ == "__main__":
     load()
