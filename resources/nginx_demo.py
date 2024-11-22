@@ -33,8 +33,9 @@ def init():
     ml.load_integration_jobs()
     kibana.load() #dashboards
     kibana.create_alerts()
-    assistant.load()
+    assistant.load_elser()
     time.sleep(10)
+    assistant.load()
     context.load()
     
 init() 

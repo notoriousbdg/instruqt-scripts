@@ -72,5 +72,19 @@ def load():
     else:
         log_message("LLM_PROXY_PROD not found in environment variables")
 
+def load_elser():
+    body = {
+        "service": "elser",
+        "service_settings": {
+            "num_allocations": 1,
+            "num_threads": 1
+        }
+    }
+    resp = requests.put(f"{os.environ['ELASTICSEARCH_URL']}/_inference/sparse_embedding/elser_model_2_linux-x86_64",
+                            json=body, timeout=TIMEOUT,
+                            auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']), 
+                            headers={"kbn-xsrf": "reporting", "Content-Type": "application/json"})
+    print(resp.json())  
+
 if __name__ == "__main__":
     load()
