@@ -37,7 +37,7 @@ def deploy_three_tiered_java():
                 })
 
         # Write modified deployments to a temporary file
-        modified_deployment_file = 'resources/three-tier-java-app/modified-deployment.yaml'
+        modified_deployment_file = 'three-tier-java-app/modified-deployment.yaml'
         with open(modified_deployment_file, 'w') as f:
             yaml.safe_dump_all(deployments, f)
 
