@@ -11,6 +11,9 @@ spec:
     metadata:
       labels:
         app: service-a
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
+        instrumentation.opentelemetry.io/container-names: "service-a"
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
@@ -33,6 +36,9 @@ spec:
     metadata:
       labels:
         app: service-b
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
+        instrumentation.opentelemetry.io/container-names: "service-a"  
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
@@ -55,6 +61,9 @@ spec:
     metadata:
       labels:
         app: service-c
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
+        instrumentation.opentelemetry.io/container-names: "service-a"
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
