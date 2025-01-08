@@ -6,11 +6,19 @@ DEMO_TYPE=${1:-nginx_demo}  # Default to nginx if no argument provided
 echo "Setting up demo type: $DEMO_TYPE" >> log.txt
 
 
+# finish elastic install (this needs to be done here because _SANDBOX_ID is not available outside of the setup script)
+export _SANDBOX_ID=$_SANDBOX_ID
+/usr/local/bin/elastic-start.sh
+
+# setup openai (this needs to be done here because secrets are not available outside of the setup script)
+export SA_LLM_PROXY_BEARER_TOKEN=$SA_LLM_PROXY_BEARER_TOKEN
+
+
 export $(cat /root/.env | xargs)
 BASE64=$(echo -n "elastic:${ELASTICSEARCH_PASSWORD}" | base64)
 
 output=$(curl 'https://llm-proxy.prod-3.eden.elastic.dev/key/generate' \
---header 'Authorization: Bearer '"$LLM_PROXY_PROD"'' \
+--header 'Authorization: Bearer '"$SA_LLM_PROXY_BEARER_TOKEN"'' \
 --header 'Content-Type: application/json' \
 --data-raw '{"models": ["gpt-4"],"duration": "7d", "metadata": {"user": "instruqt-observe-ml-'"$_SANDBOX_ID"'"}}')
 
