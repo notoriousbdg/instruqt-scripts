@@ -12,13 +12,13 @@ spec:
       labels:
         app: service-a
     spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
       containers:
       - name: service-a
         image: djhope99/service-a:latest
         ports:
         - containerPort: 8080
-        nodeSelector:
-          kubernetes.io/arch: amd64
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,13 +34,13 @@ spec:
       labels:
         app: service-b
     spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
       containers:
       - name: service-b
         image: djhope99/service-b:latest
         ports:
         - containerPort: 8080
-        nodeSelector:
-          kubernetes.io/arch: amd64
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -56,13 +56,13 @@ spec:
       labels:
         app: service-c
     spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
       containers:
       - name: service-c
         image: djhope99/service-c:latest
         ports:
         - containerPort: 8080
-        nodeSelector:
-          kubernetes.io/arch: amd64
         resources:
           requests:
             cpu: "200m"
@@ -85,11 +85,11 @@ spec:
       labels:
         app: load-generator
     spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
       containers:
       - name: load-generator
         image: djhope99/load-generator:latest
-        nodeSelector:
-          kubernetes.io/arch: amd64
         env:
         - name: REQUEST_RATE_MS
           value: "1000"  # Adjust request rate here (milliseconds) 
