@@ -21,11 +21,14 @@ def deploy_three_tiered_java():
     # Paths to your YAML files
     deployment_file = 'three-tier-java-app/deployment.yaml'
     service_file = 'three-tier-java-app/services.yaml'
+    namespace_file = 'three-tier-java-app/namespace.yaml'
+
 
     try:
         # Apply the configurations
-        subprocess.run(['kubectl', 'apply', '-f', deployment_file], check=True)
+        subprocess.run(['kubectl', 'apply', '-f', namespace_file], check=True)
         subprocess.run(['kubectl', 'apply', '-f', service_file], check=True)
+        subprocess.run(['kubectl', 'apply', '-f', deployment_file], check=True)
         
         print("Java favorite application deployed successfully with OpenTelemetry instrumentation.")
         

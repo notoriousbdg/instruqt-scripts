@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: service-a
+  namespace: my-namespace
 spec:
   replicas: 1
   selector:
@@ -11,13 +12,11 @@ spec:
     metadata:
       labels:
         app: service-a
-      annotations:
-        instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       containers:
-      - name: service-a
+      - name: service-a-container
         image: djhope99/service-a:latest
         ports:
         - containerPort: 8080
@@ -26,6 +25,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: service-b
+  namespace: my-namespace
 spec:
   replicas: 1
   selector:
@@ -35,13 +35,11 @@ spec:
     metadata:
       labels:
         app: service-b
-      annotations:
-        instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       containers:
-      - name: service-b
+      - name: service-b-container
         image: djhope99/service-b:latest
         ports:
         - containerPort: 8080
@@ -50,6 +48,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: service-c
+  namespace: my-namespace
 spec:
   replicas: 1
   selector:
@@ -59,13 +58,11 @@ spec:
     metadata:
       labels:
         app: service-c
-      annotations:
-        instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       containers:
-      - name: service-c
+      - name: service-c-container
         image: djhope99/service-c:latest
         ports:
         - containerPort: 8080
@@ -81,6 +78,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: load-generator
+  namespace: my-namespace
 spec:
   replicas: 1
   selector:
