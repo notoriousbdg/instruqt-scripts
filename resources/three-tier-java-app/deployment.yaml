@@ -38,7 +38,7 @@ spec:
         app: service-b
       annotations:
         instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
-        instrumentation.opentelemetry.io/container-names: "service-a"  
+        instrumentation.opentelemetry.io/container-names: "service-b"  
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
@@ -63,7 +63,7 @@ spec:
         app: service-c
       annotations:
         instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
-        instrumentation.opentelemetry.io/container-names: "service-a"
+        instrumentation.opentelemetry.io/container-names: "service-c"
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
