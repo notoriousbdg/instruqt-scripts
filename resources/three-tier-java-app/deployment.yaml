@@ -16,7 +16,7 @@ spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       containers:
-      - name: service-a-container
+      - name: service-a
         image: djhope99/service-a:latest
         ports:
         - containerPort: 8080
@@ -39,7 +39,7 @@ spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       containers:
-      - name: service-b-container
+      - name: service-b
         image: djhope99/service-b:latest
         ports:
         - containerPort: 8080
@@ -62,7 +62,7 @@ spec:
       nodeSelector:
         kubernetes.io/arch: amd64
       containers:
-      - name: service-c-container
+      - name: service-c
         image: djhope99/service-c:latest
         ports:
         - containerPort: 8080
