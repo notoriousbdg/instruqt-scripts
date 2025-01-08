@@ -5,4 +5,4 @@ metadata:
   labels:
     name: my-namespace
   annotations:
-    instrumentation.opentelemetry.io/inject-java: "true" 
+    instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"
