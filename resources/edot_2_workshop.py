@@ -19,8 +19,8 @@ def deploy_three_tiered_java():
     import os
 
     # Paths to your YAML files
-    deployment_file = 'resources/three-tier-java-app/deployment.yaml'
-    service_file = 'resources/three-tier-java-app/services.yaml'
+    deployment_file = 'three-tier-java-app/deployment.yaml'
+    service_file = 'three-tier-java-app/services.yaml'
 
     try:
         # Read and modify deployment file to add OpenTelemetry annotations
