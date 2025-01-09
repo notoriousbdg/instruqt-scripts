@@ -13,6 +13,9 @@ export _SANDBOX_ID=$_SANDBOX_ID
 # setup openai (this needs to be done here because secrets are not available outside of the setup script)
 export LLM_PROXY_PROD=$LLM_PROXY_PROD
 
+export ELASTICSEARCH_PASSWORD=$(kubectl get secret elasticsearch-es-elastic-user -n default -o go-template='{{.data.elastic | base64decode}}')
+
+
 export $(cat /root/.env | xargs)
 BASE64=$(echo -n "elastic:${ELASTICSEARCH_PASSWORD}" | base64)
 
