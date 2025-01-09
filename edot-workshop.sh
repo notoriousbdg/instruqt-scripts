@@ -34,3 +34,4 @@ echo $GCSKEY_EDEN_WORKSHOP >> /tmp/gcs.client.eden-workshop.credentials_file
 cd instruqt-scripts
 chmod +x setup-elastic-in-instruqt.sh
 source ./setup-elastic-in-instruqt.sh edot_workshop
+sleep 10
