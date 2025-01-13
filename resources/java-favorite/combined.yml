@@ -41,6 +41,8 @@ spec:
         ports:
         - containerPort: 5000
         env:
+        - name: ELASTIC_OTEL_INFERRED_SPANS_ENABLED
+          value: "true"
         - name: REDIS_HOST
           value: "redis"
         - name: TOGGLE_SERVICE_DELAY
