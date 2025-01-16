@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: my-namespace
-  labels:
-    name: my-namespace
-  annotations:
-    instrumentation.opentelemetry.io/inject-java: "opentelemetry-operator-system/elastic-instrumentation"

@@ -57,7 +57,7 @@ def load():
             api_key = proxy_response.json()['key']
             log_message("Successfully obtained API key")
 
-            # Create connector
+            # Create connector (retry up to 10 times if 403 occurs)
             connector_data = {
                 'name': 'openai-connector',
                 'config': {
@@ -70,15 +70,26 @@ def load():
                 'connector_type_id': '.gen-ai'
             }
 
-            resp = requests.post(
-                f"{os.environ['KIBANA_URL']}/api/actions/connector",
-                json=connector_data,
-                timeout=TIMEOUT,
-                auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']),
-                headers={'kbn-xsrf': 'true', 'Content-Type': 'application/json'}
-            )
-            log_message(f"Connector creation response status: {resp.status_code}")
-      
+            max_retries = 10
+            for attempt in range(1, max_retries + 1):
+                resp = requests.post(
+                    f"{os.environ['KIBANA_URL']}/api/actions/connector",
+                    json=connector_data,
+                    timeout=TIMEOUT,
+                    auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']),
+                    headers={'kbn-xsrf': 'true', 'Content-Type': 'application/json'}
+                )
+                log_message(f"Connector creation response status: {resp.status_code}")
+
+                if resp.status_code == 403:
+                    log_message(f"Attempt {attempt} of {max_retries} returned 403 - retrying...")
+                    if attempt < max_retries:
+                        continue
+                    else:
+                        log_message("All retry attempts exhausted, still receiving 403.")
+                # If not 403, break from the loop
+                break
+
             load_kb()
             load_kb() 
             
