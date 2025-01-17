@@ -1,5 +1,6 @@
 import requests
 import os
+import time
 from datetime import datetime
 
 TIMEOUT = 360
@@ -11,25 +12,42 @@ def log_message(message):
         f.write(f"[{timestamp}] {message}\n")
         
 def load_kb():
+    max_retries = 3
+    wait_seconds = 20
 
-            kb_resp = requests.post(
-                f"{os.environ['KIBANA_URL']}/internal/observability_ai_assistant/kb/setup",
-                timeout=TIMEOUT,
-                auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']),
-                headers={'kbn-xsrf': 'true', 'X-Elastic-Internal-Origin': 'Kibana', 'Content-Type': 'application/json'}
-            )
-            log_message(f"KB setup response status: {kb_resp.status_code}")
+    # Try up to 3 times if we get a 500 when setting up KB
+    for attempt in range(1, max_retries + 1):
+        kb_resp = requests.post(
+            f"{os.environ['KIBANA_URL']}/internal/observability_ai_assistant/kb/setup",
+            timeout=TIMEOUT,
+            auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD']),
+            headers={'kbn-xsrf': 'true', 'X-Elastic-Internal-Origin': 'Kibana', 'Content-Type': 'application/json'}
+        )
 
-            sync_resp = requests.get(
-                f"{os.environ['KIBANA_URL']}/api/ml/saved_objects/sync",
-                timeout=TIMEOUT,
-                auth=(
-                    os.environ['ELASTICSEARCH_USER'],
-                    os.environ['ELASTICSEARCH_PASSWORD']
-                ),
-                headers={"kbn-xsrf": "reporting"}
-            )
-            print(sync_resp.json())      
+        log_message(f"KB setup response status: {kb_resp.status_code}")
+
+        # If there's a server error (500), retry up to max_retries
+        if kb_resp.status_code == 500:
+            if attempt < max_retries:
+                log_message(f"Attempt {attempt}/{max_retries} returned 500, waiting {wait_seconds}s before retry...")
+                time.sleep(wait_seconds)
+            else:
+                log_message("All attempts exhausted, still receiving 500 for KB setup.")
+        else:
+            # Exit the retry loop if not a 500
+            break
+
+    # Once KB setup is done (or we've reached our max retries), call sync
+    sync_resp = requests.get(
+        f"{os.environ['KIBANA_URL']}/api/ml/saved_objects/sync",
+        timeout=TIMEOUT,
+        auth=(
+            os.environ['ELASTICSEARCH_USER'],
+            os.environ['ELASTICSEARCH_PASSWORD']
+        ),
+        headers={"kbn-xsrf": "reporting"}
+    )
+    print(sync_resp.json())      
 
 def load():
     log_message("Starting assistant load process")
@@ -91,8 +109,7 @@ def load():
                 break
 
             load_kb()
-            load_kb() 
-            
+                        
         except Exception as e:
             log_message(f"Error occurred: {str(e)}")
             raise
