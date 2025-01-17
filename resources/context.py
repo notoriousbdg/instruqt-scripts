@@ -21,4 +21,3 @@ def load_knowledge():
 
 def load():
     load_knowledge()
-
