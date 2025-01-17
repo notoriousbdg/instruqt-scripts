@@ -35,6 +35,6 @@ def init():
     kibana.create_alerts()
     time.sleep(10)
     assistant.load()
-    context.load()
+    #context.load()
     
 init() 
