@@ -23,7 +23,7 @@ metadata:
   name: kibana
   namespace: default
 spec:
-  version: 8.16.1
+  version: 8.17.0
   count: 1
   elasticsearchRef:
     name: elasticsearch
@@ -97,7 +97,7 @@ metadata:
   name: elasticsearch
   namespace: default
 spec:
-  version: 8.16.1
+  version: 8.17.0
   secureSettings:
   - secretName: gcs-credentials-eden-workshop
   http:
@@ -127,7 +127,7 @@ metadata:
   name: fleet-server
   namespace: default
 spec:
-  version: 8.16.1
+  version: 8.17.0
   kibanaRef:
     name: kibana
   elasticsearchRefs:
@@ -159,7 +159,7 @@ metadata:
   name: elastic-agent
   namespace: default
 spec:
-  version: 8.16.1
+  version: 8.17.0
   kibanaRef:
     name: kibana
   fleetServerRef: 
